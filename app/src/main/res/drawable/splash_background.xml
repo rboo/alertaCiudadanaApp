@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    android:opacity="opaque"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/teal_200"/>
+
+    <item
+        android:left="15dp"
+        android:right="15dp"
+        android:top="260dp"
+        android:bottom="260dp">
+        <bitmap android:src="@drawable/oficial"/>
+    </item>
+
+</layer-list>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "277260721203",
+    "project_id": "alertaciudadana-50dd3",
+    "storage_bucket": "alertaciudadana-50dd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277260721203:android:16cb21b6b5b76a7e55d746",
+        "android_client_info": {
+          "package_name": "com.core.alertaciudadana"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277260721203-4fghfd8usf3259nfnkdj00uleicr1d6r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCUlhDZiN5q6cKarYWFv7pdZi-NTNzN4k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277260721203-4fghfd8usf3259nfnkdj00uleicr1d6r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
