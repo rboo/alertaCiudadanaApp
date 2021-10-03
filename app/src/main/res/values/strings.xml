@@ -44,4 +44,9 @@
     <string name="fcm_message">FCM Message</string>
     <string name="title_activity_maps">MapsActivity</string>
 
+    <!--
+        variable for settings actions gps
+     -->
+    <string name="msg_settings_gps">Para Continuar, activa la ubicación del dispositivo, que usa el servicio de ubicación de Google.</string>
+
 </resources>

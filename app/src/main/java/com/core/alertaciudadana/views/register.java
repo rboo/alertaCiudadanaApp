@@ -17,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class register extends AppCompatActivity implements View.OnClickListener {
 
     private UserImpl user;
-    EditText et_nombres, et_apellidos, et_email, et_contrasena;
+    EditText et_nombres, et_apellidos, et_email, et_contrasena, et_dni, et_telefono;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,9 @@ public class register extends AppCompatActivity implements View.OnClickListener 
         et_apellidos = findViewById(R.id.et_apellidos);
         et_email = findViewById(R.id.et_email);
         et_contrasena = findViewById(R.id.et_contrasena);
+        et_dni = findViewById(R.id.et_dni);
+        et_telefono = findViewById(R.id.et_telefono);
+
         btn_register.setOnClickListener(this);
     }
 
@@ -43,18 +46,21 @@ public class register extends AppCompatActivity implements View.OnClickListener 
                 String apellidos = et_apellidos.getText().toString().trim();
                 String email = et_email.getText().toString().trim();
                 String constrasena = et_contrasena.getText().toString().trim();
+                String dni = et_dni.getText().toString().trim();
+                String telefono = et_telefono.getText().toString().trim();
+
                 Usuarios dataUsuarios = new Usuarios(
                         apellidos,
                         constrasena,
                         email,
-                        "",
+                        "xxx",
                         "",
                         "",
                         nombres,
+                        dni,
                         "",
-                        "",
-                        "",
-                        "",
+                        telefono,
+                        "1",
                         ""
                 );
                 user.createAccount(dataUsuarios);

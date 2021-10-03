@@ -5,9 +5,13 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -31,6 +36,7 @@ import com.core.alertaciudadana.models.user.Usuarios;
 import com.core.alertaciudadana.presenters.IncidenteImpl;
 import com.core.alertaciudadana.presenters.UserImpl;
 import com.core.alertaciudadana.util.DateUtil;
+import com.core.alertaciudadana.util.LocationTrack;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,6 +64,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     Usuarios usuarios;
+    LocationManager mloLocationManager;
+    LocationTrack locationTrack;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -81,12 +89,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         cv_otros.setOnClickListener(this);
 
         incidente = new IncidenteImpl(miContexto, mAuth, mDatabase);
-        user = new UserImpl(miContexto,mAuth,mDatabase);
+        user = new UserImpl(miContexto, mAuth, mDatabase);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(miContexto);
         getLocation();
         tMgr = (TelephonyManager) miContexto.getSystemService(Context.TELEPHONY_SERVICE);
 
+        mloLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         /*homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -102,37 +111,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        locationTrack.stopListener();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.robo:
-                //getPhoneNumber();
-                ProgressDialog progressDialog = new ProgressDialog(getActivity());
-
-                progressDialog.setMessage("Enviando Notificacion...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-
-                String key = mDatabase.push().getKey();
-
-                incidente.registrarIncidente(new Incidente(
-                        "Nuevo incidente generado",
-                        DateUtil.FechaCorta(),
-                        DateUtil.HoraActual(),
-                        "imagen",
-                        latitude,
-                        longitude,
-                        "Asalto o Robo",
-                        key,
-                        getCurrentUser(),
-                        0
-                ));
-                progressDialog.dismiss();
-
+                if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    displayPromptForEnablingGPS(getActivity());
+                } else {
+                    createNotification("Asalto o Robo");
+                }
                 break;
             case R.id.sospechoso:
+                getLocation();
                 break;
             case R.id.violencia:
                 break;
@@ -140,6 +133,29 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
 
         }
+    }
+
+    private void createNotification(String titulo) {
+        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+
+        progressDialog.setMessage("Enviando Notificacion...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        String key = mDatabase.push().getKey();
+
+        incidente.registrarIncidente(new Incidente(
+                "Nuevo incidente generado",
+                DateUtil.FechaCorta(),
+                DateUtil.HoraActual(),
+                "imagen",
+                latitude,
+                longitude,
+                titulo,
+                key,
+                getCurrentUser()
+        ));
+        progressDialog.dismiss();
     }
 
     private void getPhoneNumber() {
@@ -174,22 +190,41 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                                 Log.d(TAG, "getLocation is not null");
-                                /*Toast.makeText(
-                                        miContexto,
-                                        "Latitud " + location.getLatitude() + " - Longitud" + location.getLongitude(),
-                                        Toast.LENGTH_SHORT)
-                                        .show();*/
+                                Toast.makeText(miContexto, "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         }
     }
 
-    private String getCurrentUser(){
+    private String getCurrentUser() {
         return mAuth.getCurrentUser().getUid();
         //Log.d(TAG,"User -> "+mAuth.getCurrentUser().getEmail()+ "-"+mAuth.getCurrentUser().getUid());
         //user.getUserData(mAuth.getCurrentUser().getUid());
         //System.out.println("correo "+user.getUsuarios().getCorreo());
+    }
+
+    public void displayPromptForEnablingGPS(Activity activity) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final String action = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
+        final String message = getString(R.string.msg_settings_gps);
+
+        builder.setMessage(message)
+                .setPositiveButton("ACEPTAR",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                activity.startActivity(new Intent(action));
+                                d.dismiss();
+                            }
+                        })
+                .setNegativeButton("NO, GRACIAS",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                d.cancel();
+                            }
+                        });
+        builder.create().show();
     }
 
 }

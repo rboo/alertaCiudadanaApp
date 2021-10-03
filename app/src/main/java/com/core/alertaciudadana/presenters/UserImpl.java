@@ -3,6 +3,7 @@ package com.core.alertaciudadana.presenters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.core.alertaciudadana.interfaces.UserInteractor;
 import com.core.alertaciudadana.models.user.Usuarios;
 import com.core.alertaciudadana.views.MenuDrawer;
+import com.core.alertaciudadana.views.login;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -43,12 +45,12 @@ public class UserImpl implements UserInteractor {
     }
 
     @Override
-    public void login(String user, String pass) {
-        ProgressDialog progressDialog = new ProgressDialog(context);
+    public void login(String user, String pass, boolean checked) {
+        //ProgressDialog progressDialog = new ProgressDialog(context);
 
-        progressDialog.setMessage("Validando Cuenta...");
+        /*progressDialog.setMessage("Validando Cuenta...");
         progressDialog.setCancelable(false);
-        progressDialog.show();
+        progressDialog.show();*/
 
         mAuth.signInWithEmailAndPassword(user, pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -56,11 +58,18 @@ public class UserImpl implements UserInteractor {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
-                            progressDialog.dismiss();
+                            //progressDialog.dismiss();
                             Log.w(TAG, "signInWithEmail", task.getException());
                             Toast.makeText(context, "Inicio de sesion fallido...!!", Toast.LENGTH_SHORT).show();
                         } else {
-                            progressDialog.dismiss();
+                            //progressDialog.dismiss();
+                            SharedPreferences prefs = context.getSharedPreferences("session", Context.MODE_PRIVATE);
+                            //prefs.edit();
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Log.d(TAG, "task uid -> " + task.getResult().getUser().getUid());
+                            editor.putString("user", task.getResult().getUser().getUid());
+                            editor.putBoolean("remind",checked);
+                            editor.commit();
                             Toast.makeText(context, "Bienvenido", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, MenuDrawer.class);
                             context.startActivity(intent);
@@ -175,5 +184,35 @@ public class UserImpl implements UserInteractor {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                     }
                 });
+    }
+
+    public boolean isLogged(String uid){
+        final boolean[] flag = {false};
+        mDatabase.getDatabase().getReference().child("usuarios").child(uid).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        /*usuarios = dataSnapshot.getValue(Usuarios.class);
+                        System.out.println("data usuario"+usuarios.getCorreo());*/
+                        /*if(!dataSnapshot.exists()){
+                            logout();
+                            SharedPreferences prefs = context.getSharedPreferences("session", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("user", null);
+                            editor.commit();
+                            Intent intent = new Intent(context, login.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        }*/
+                        flag[0] = true;
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                        flag[0] = false;
+                    }
+                });
+        return flag[0];
     }
 }

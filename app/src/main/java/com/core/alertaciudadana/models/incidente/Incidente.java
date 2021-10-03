@@ -10,12 +10,11 @@ public class Incidente {
     private String titulo;
     private String uid;
     private String usuario;
-    private Integer numberPhone;
 
     public Incidente() {
     }
 
-    public Incidente(String descripcion, String fecha, String hora, String imagen, Double latitud, Double longitud, String titulo, String uid, String usuario, Integer numberPhone) {
+    public Incidente(String descripcion, String fecha, String hora, String imagen, Double latitud, Double longitud, String titulo, String uid, String usuario) {
         this.descripcion = descripcion;
         this.fecha = fecha;
         this.hora = hora;
@@ -25,7 +24,6 @@ public class Incidente {
         this.titulo = titulo;
         this.uid = uid;
         this.usuario = usuario;
-        this.numberPhone = numberPhone;
     }
 
     public String getDescripcion() {
@@ -100,14 +98,6 @@ public class Incidente {
         this.usuario = usuario;
     }
 
-    public Integer getNumberPhone() {
-        return numberPhone;
-    }
-
-    public void setNumberPhone(Integer numberPhone) {
-        this.numberPhone = numberPhone;
-    }
-
     @Override
     public String toString() {
         return "Incidente{" +
@@ -119,8 +109,7 @@ public class Incidente {
                 ", longitud=" + longitud +
                 ", titulo='" + titulo + '\'' +
                 ", uid='" + uid + '\'' +
-                ", usuario='" + usuario + '\'' +
-                ", numberPhone=" + numberPhone +
+                ", usuario='" + usuario +
                 '}';
     }
 }
