@@ -44,6 +44,12 @@
     <string name="fcm_message">FCM Message</string>
     <string name="title_activity_maps">MapsActivity</string>
 
+    <!---->
+    <string-array name="gender">
+        <item>Femenino</item>
+        <item>Masculino</item>
+    </string-array>
+
     <!--
         variable for settings actions gps
      -->

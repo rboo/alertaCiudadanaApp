@@ -41,15 +41,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_maps" />
-        <activity
             android:name=".views.register"
             android:exported="true"
             android:theme="@style/SplashTheme" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".views.SplashActivity"
             android:exported="true" />
         <activity
             android:name=".views.MenuDrawer"
@@ -66,17 +62,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
 
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

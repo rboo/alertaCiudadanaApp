@@ -1,9 +1,7 @@
-package com.core.alertaciudadana.views.ui.home;
+package com.core.alertaciudadana.views.ui.incidents;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,17 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.core.alertaciudadana.R;
 import com.core.alertaciudadana.databinding.FragmentHomeBinding;
@@ -125,9 +118,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.sospechoso:
-                getLocation();
+                if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    displayPromptForEnablingGPS(getActivity());
+                } else {
+                    createNotification("Sospechoso");
+                }
                 break;
             case R.id.violencia:
+                if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    displayPromptForEnablingGPS(getActivity());
+                } else {
+                    createNotification("Nuevo Caso de Violencia");
+                }
                 break;
             case R.id.otros:
                 break;
@@ -136,12 +138,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void createNotification(String titulo) {
-        ProgressDialog progressDialog = new ProgressDialog(getActivity());
-
-        progressDialog.setMessage("Enviando Notificacion...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
         String key = mDatabase.push().getKey();
 
         incidente.registrarIncidente(new Incidente(
@@ -155,7 +151,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 key,
                 getCurrentUser()
         ));
-        progressDialog.dismiss();
     }
 
     private void getPhoneNumber() {
@@ -190,7 +185,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                                 Log.d(TAG, "getLocation is not null");
-                                Toast.makeText(miContexto, "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(miContexto, "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

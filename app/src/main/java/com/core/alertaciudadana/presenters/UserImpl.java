@@ -14,6 +14,7 @@ import com.core.alertaciudadana.models.user.Usuarios;
 import com.core.alertaciudadana.views.MenuDrawer;
 import com.core.alertaciudadana.views.login;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,11 +47,11 @@ public class UserImpl implements UserInteractor {
 
     @Override
     public void login(String user, String pass, boolean checked) {
-        //ProgressDialog progressDialog = new ProgressDialog(context);
+        ProgressDialog progressDialog = new ProgressDialog(context);
 
-        /*progressDialog.setMessage("Validando Cuenta...");
+        progressDialog.setMessage("Validando Cuenta...");
         progressDialog.setCancelable(false);
-        progressDialog.show();*/
+        progressDialog.show();
 
         mAuth.signInWithEmailAndPassword(user, pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -58,11 +59,11 @@ public class UserImpl implements UserInteractor {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
-                            //progressDialog.dismiss();
+                            progressDialog.dismiss();
                             Log.w(TAG, "signInWithEmail", task.getException());
                             Toast.makeText(context, "Inicio de sesion fallido...!!", Toast.LENGTH_SHORT).show();
                         } else {
-                            //progressDialog.dismiss();
+                            progressDialog.dismiss();
                             SharedPreferences prefs = context.getSharedPreferences("session", Context.MODE_PRIVATE);
                             //prefs.edit();
                             SharedPreferences.Editor editor = prefs.edit();
@@ -75,6 +76,13 @@ public class UserImpl implements UserInteractor {
                             context.startActivity(intent);
                         }
                     }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Log.i(TAG, "signInWithEmail", e.getCause());
+                    }
                 });
     }
 
@@ -86,6 +94,13 @@ public class UserImpl implements UserInteractor {
 
     @Override
     public void createAccount(Usuarios usuarios) {
+
+        ProgressDialog progressDialog = new ProgressDialog(context);
+
+        progressDialog.setMessage("Registrando usuario...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         mAuth.createUserWithEmailAndPassword(usuarios.getCorreo(), usuarios.getClave())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -126,6 +141,13 @@ public class UserImpl implements UserInteractor {
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }
+                        progressDialog.dismiss();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
                     }
                 });
     }
