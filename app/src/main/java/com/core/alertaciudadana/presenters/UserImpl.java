@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class UserImpl implements UserInteractor {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        String uuid;
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
                             progressDialog.dismiss();
@@ -67,12 +69,14 @@ public class UserImpl implements UserInteractor {
                             SharedPreferences prefs = context.getSharedPreferences("session", Context.MODE_PRIVATE);
                             //prefs.edit();
                             SharedPreferences.Editor editor = prefs.edit();
-                            Log.d(TAG, "task uid -> " + task.getResult().getUser().getUid());
-                            editor.putString("user", task.getResult().getUser().getUid());
+                            uuid = task.getResult().getUser().getUid();
+                            Log.d(TAG, "task uid -> " + uuid);
+                            editor.putString("user", uuid);
                             editor.putBoolean("remind",checked);
                             editor.commit();
                             Toast.makeText(context, "Bienvenido", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, MenuDrawer.class);
+                            intent.putExtra("usuario", uuid);
                             context.startActivity(intent);
                         }
                     }

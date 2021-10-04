@@ -8,16 +8,22 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.core.alertaciudadana.R;
 import com.core.alertaciudadana.databinding.ActivityMenuDrawerBinding;
+import com.core.alertaciudadana.models.user.Usuarios;
 import com.core.alertaciudadana.presenters.UserImpl;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -34,6 +40,10 @@ public class MenuDrawer extends AppCompatActivity {
     private ActivityMenuDrawerBinding binding;
     private UserImpl user;
     SharedPreferences prefs;
+    TextView tv_user;
+    String uuid;
+    ImageView iv_avatar;
+    private final static String TAG = MenuDrawer.class.getSimpleName().toString();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +71,33 @@ public class MenuDrawer extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_menu_drawer);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         //NavigationUI.setupWithNavController(navigationView, navController);
+
+
+        uuid = getIntent().getStringExtra("usuario");
+        System.out.println("usuarioDrawer " + uuid);
+        View headerView = navigationView.getHeaderView(0);
+
+        mDatabase.getDatabase().getReference().child("usuarios").child(uuid).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Usuarios usuarios = dataSnapshot.getValue(Usuarios.class);
+                        tv_user = (TextView) headerView.findViewById(R.id.tv_user);
+                        iv_avatar = headerView.findViewById(R.id.iv_avatar);
+                        tv_user.setText(usuarios.getNombres()+" "+usuarios.getApellidos());
+                        if (usuarios.getSexo().equals("Masculino")){
+                            iv_avatar.setImageResource(R.drawable.avatar_man);
+                        }else{
+                            iv_avatar.setImageResource(R.drawable.avatar_women);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                    }
+                });
+
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

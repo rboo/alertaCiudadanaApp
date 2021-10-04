@@ -68,7 +68,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_reg_usuario:
-                String nombres = et_email.getText().toString().trim();
+                String nombres = et_nombres.getText().toString().trim();
                 String apellidos = et_apellidos.getText().toString().trim();
                 String email = et_email.getText().toString().trim();
                 String constrasena = et_contrasena.getText().toString().trim();

@@ -23,7 +23,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.core.alertaciudadana.R;
-import com.core.alertaciudadana.databinding.FragmentHomeBinding;
 import com.core.alertaciudadana.models.incidente.Incidente;
 import com.core.alertaciudadana.models.user.Usuarios;
 import com.core.alertaciudadana.presenters.IncidenteImpl;
@@ -38,10 +37,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class IncidentFragment extends Fragment implements View.OnClickListener {
 
-    private HomeViewModel homeViewModel;
-    private FragmentHomeBinding binding;
     private CardView cv_robo, cv_sospechoso, cv_violencia, cv_otros;
     private Context miContexto = null;
     private IncidenteImpl incidente;
@@ -49,7 +46,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private FusedLocationProviderClient fusedLocationClient;
     private final static int REQUEST_LOCATION_PERMISSION = 1;
     private final static int REQUEST_PHONE_PERMISSION = 1;
-    private final static String TAG = HomeFragment.class.getSimpleName().toString();
+    private final static String TAG = IncidentFragment.class.getSimpleName().toString();
     private double latitude;
     private double longitude;
     String mPhoneNumber;
@@ -103,7 +100,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
         locationTrack.stopListener();
     }
 

@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -28,16 +27,6 @@ import android.widget.Toast;
 
 import com.core.alertaciudadana.R;
 import com.core.alertaciudadana.presenters.UserImpl;
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,7 +37,7 @@ import java.util.List;
 public class login extends AppCompatActivity implements View.OnClickListener {
 
     private UserImpl user;
-    TextView tv_skip_login, tv_register;
+    TextView tv_skip_login, tv_register, tv_recoveryPassword;
     EditText et_email, et_password;
     CheckBox chk_remind;
     SharedPreferences prefs;
@@ -79,15 +68,17 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         /*Inputs Components*/
         et_email = findViewById(R.id.et_usuario);
         et_password = findViewById(R.id.et_contrasena);
-        tv_skip_login = findViewById(R.id.tv_skip_login);
+        tv_recoveryPassword = findViewById(R.id.recoveyPassword);
+        //tv_skip_login = findViewById(R.id.tv_skip_login);
         tv_register = findViewById(R.id.tv_register);
         chk_remind = findViewById(R.id.chk_remind);
-        Button btn_login = findViewById(R.id.btn_ingresar);
+        Button btn_login = findViewById(R.id.btn_aceptar);
 
         /*Listeners Components*/
         btn_login.setOnClickListener(this);
-        tv_skip_login.setOnClickListener(this);
+        //tv_skip_login.setOnClickListener(this);
         tv_register.setOnClickListener(this);
+        tv_recoveryPassword.setOnClickListener(this);
 
         checkPermission();
 
@@ -104,7 +95,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_ingresar:
+            case R.id.btn_aceptar:
                 /*if (chk_remind.isChecked()) {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("remind", chk_remind.isChecked());
@@ -112,12 +103,15 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                 }*/
                 validateInput();
                 break;
-            case R.id.tv_skip_login:
+            case R.id.recoveyPassword:
+                startActivity(new Intent(login.this, ForgettPassword.class));
+                break;
+            /*case R.id.tv_skip_login:
                 Intent intent = new Intent(login.this, MenuDrawer.class);
                 //mAuth.getCurrentUser().getUid();
                 startActivity(intent);
                 finish();
-                break;
+                break;*/
             case R.id.tv_register:
                 startActivity(new Intent(login.this, register.class));
                 //finish();
@@ -209,54 +203,6 @@ public class login extends AppCompatActivity implements View.OnClickListener {
             }
         }
     }
-
-    /*protected void createLocationRequest() {
-
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-
-        SettingsClient client = LocationServices.getSettingsClient(this);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                // ...
-                LatLng home = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(home, zoom);
-                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
-                mMap.animateCamera(camera);
-            }
-        });
-
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(login.this,
-                                REQUEST_CHECK_SETTINGS);
-
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        // Ignore the error.
-                        Toast.makeText(login.this, "catch on failure", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-    }*/
 
     public void displayPromptForEnablingGPS(Activity activity) {
 
