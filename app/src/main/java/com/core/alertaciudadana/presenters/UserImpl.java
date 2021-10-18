@@ -128,7 +128,8 @@ public class UserImpl implements UserInteractor {
                                 usuarios.getSexo(),
                                 usuarios.getTelefono(),
                                 usuarios.getTipoacceso(),
-                                uid
+                                uid,
+                                "2" //2 -> movil
                         );
 
                         mDatabase.child("usuarios")

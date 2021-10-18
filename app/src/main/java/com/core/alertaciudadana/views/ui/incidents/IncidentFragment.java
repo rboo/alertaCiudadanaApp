@@ -6,20 +6,30 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.core.alertaciudadana.R;
@@ -29,12 +39,22 @@ import com.core.alertaciudadana.presenters.IncidenteImpl;
 import com.core.alertaciudadana.presenters.UserImpl;
 import com.core.alertaciudadana.util.DateUtil;
 import com.core.alertaciudadana.util.LocationTrack;
+import com.core.alertaciudadana.views.MenuDrawer;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class IncidentFragment extends Fragment implements View.OnClickListener {
@@ -128,6 +148,8 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.otros:
+                Intent intent = new Intent(miContexto, otherIncident.class);
+                startActivity(intent);
                 break;
 
         }
@@ -147,6 +169,9 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                 key,
                 getCurrentUser()
         ));
+
+
+
     }
 
     private void getPhoneNumber() {
@@ -180,11 +205,26 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                                 // Start the reverse geocode AsyncTask
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
-                                Log.d(TAG, "getLocation is not null");
+                                Log.d(TAG, "show last Location Latitude: "+latitude+ " Longitude: "+longitude);
                                 //Toast.makeText(miContexto, "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+                            }else{
+                                getLastKnowLocation();
                             }
                         }
                     });
+        }
+    }
+
+    private void getLastKnowLocation() {
+        Criteria criteria = new Criteria();
+        if (ActivityCompat.checkSelfPermission(miContexto, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(miContexto, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = mloLocationManager.getLastKnownLocation(mloLocationManager.getBestProvider(criteria, false));
+        if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            Log.d(TAG, "show last know location Latitude: "+latitude+" Longitude: "+longitude);
         }
     }
 
@@ -217,5 +257,22 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                         });
         builder.create().show();
     }
+
+
+
+
+
+    /*@Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE) { //&& resultCode == RESULT_OK) {
+            Log.i("TAG", "onActivityResult: resultCode" + resultCode);
+            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+            //Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            iv_foto_incidente.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            iv_foto_incidente.setImageBitmap(takenImage);
+        }
+    }*/
 
 }

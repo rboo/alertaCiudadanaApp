@@ -13,11 +13,12 @@ public class Usuarios {
     private String telefono;
     private String tipoacceso;
     private String tokengcm;
+    private String host;
 
     public Usuarios() {
     }
 
-    public Usuarios(String apellidos, String clave, String correo, String direccion, String fechanac, String imagen, String nombres, String numerodocumento, String sexo, String telefono, String tipoacceso, String tokengcm) {
+    public Usuarios(String apellidos, String clave, String correo, String direccion, String fechanac, String imagen, String nombres, String numerodocumento, String sexo, String telefono, String tipoacceso, String tokengcm, String host) {
         this.apellidos = apellidos;
         this.clave = clave;
         this.correo = correo;
@@ -30,6 +31,7 @@ public class Usuarios {
         this.telefono = telefono;
         this.tipoacceso = tipoacceso;
         this.tokengcm = tokengcm;
+        this.host = host;
     }
 
     public String getApellidos() {
@@ -128,9 +130,17 @@ public class Usuarios {
         this.tokengcm = tokengcm;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     @Override
     public String toString() {
-        return "User{" +
+        return "Usuarios{" +
                 "apellidos='" + apellidos + '\'' +
                 ", clave='" + clave + '\'' +
                 ", correo='" + correo + '\'' +
@@ -143,6 +153,7 @@ public class Usuarios {
                 ", telefono='" + telefono + '\'' +
                 ", tipoacceso='" + tipoacceso + '\'' +
                 ", tokengcm='" + tokengcm + '\'' +
+                ", host='" + host + '\'' +
                 '}';
     }
 }
