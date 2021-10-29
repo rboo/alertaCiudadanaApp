@@ -13,6 +13,7 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -74,6 +75,7 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
     private double latitude;
     private double longitude;
     private Button btn_reg_incidente;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,7 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
         btn_reg_incidente.setOnClickListener(this);
         iv_incidente.setOnClickListener(this);
         getLocation();
+        progressDialog = new ProgressDialog(this);
     }
 
     private void dispatchTakePictureIntent() {
@@ -144,12 +147,14 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
+                    progressDialog.dismiss();
                     Toast.makeText(otherIncident.this,"Error al subir imagen",Toast.LENGTH_SHORT).show();
                 }
             }).addOnSuccessListener(taskSnapshot -> {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                 // ...
                 Toast.makeText(otherIncident.this,"se subio correctamente",Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
                 finish();
             });
 
@@ -186,7 +191,7 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
 
         String key = mDatabase.push().getKey();
 
-        incidente.registrarIncidente(new Incidente(
+        /*incidente.registrarIncidente(new Incidente(
                 descripcion,
                 DateUtil.FechaCorta(),
                 DateUtil.HoraActual(),
@@ -196,8 +201,41 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
                 titulo,
                 key,
                 getCurrentUser()
-        ));
-        uploadFile();
+        ));*/
+
+
+        progressDialog.setMessage("Enviando notificacion");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        mDatabase.child("incidentes")
+                .child(key)
+                .setValue(new Incidente(
+                        descripcion,
+                        DateUtil.FechaCorta(),
+                        DateUtil.HoraActual(),
+                        photoFile.getName(),
+                        latitude,
+                        longitude,
+                        titulo,
+                        key,
+                        getCurrentUser()
+                ))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "se guardo correctamente");
+                        uploadFile();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "hubo un error al guardar el incidente " + e.getMessage());
+                        progressDialog.dismiss();
+                    }
+                });
+
     }
 
     private String getCurrentUser() {
