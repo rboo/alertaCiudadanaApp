@@ -157,8 +157,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:tint="@color/purple_200"
-                    app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
+                    app:srcCompat="@drawable/ic_baseline_photo_camera_24_black" />
 
                 <Button
                     android:id="@+id/btn_reg_incidente"
@@ -171,9 +170,9 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/button_border"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
                     android:backgroundTint="@color/purple_200"
-                    android:tint="@color/purple_200"
                     android:text="Registrar Incidente"
                     android:textColor="@android:color/white" />
             </RelativeLayout>

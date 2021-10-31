@@ -23,10 +23,13 @@
         android:theme="@style/Theme.AlertaCiudadana">
         <activity
             android:name=".views.ui.incidents.otherIncident"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.AlertaCiudadana.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.ForgettPassword"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -50,7 +53,8 @@
         <activity
             android:name=".views.register"
             android:exported="true"
-            android:theme="@style/SplashTheme" />
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.SplashActivity"
             android:exported="true" />
@@ -58,7 +62,8 @@
             android:name=".views.MenuDrawer"
             android:exported="true"
             android:label="@string/title_activity_menu_drawer"
-            android:theme="@style/Theme.AlertaCiudadana.NoActionBar" />
+            android:theme="@style/Theme.AlertaCiudadana.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.login"
             android:exported="true"
