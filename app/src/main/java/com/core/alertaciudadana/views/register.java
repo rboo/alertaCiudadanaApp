@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.core.alertaciudadana.R;
 import com.core.alertaciudadana.models.user.Usuarios;
 import com.core.alertaciudadana.presenters.UserImpl;
+import com.core.alertaciudadana.util.MessageResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,6 +25,7 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class register extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
@@ -31,11 +33,12 @@ public class register extends AppCompatActivity implements View.OnClickListener,
     EditText et_nombres, et_apellidos, et_email, et_contrasena, et_dni, et_telefono, et_direccion, et_fecha;
     ArrayAdapter<CharSequence> adapter;
     private MaterialSpinner spinner_gender;
-    private String genderValue;
+    private String genderValue = "Masculino";
     private final static String TAG = register.class.getSimpleName().toString();
     DatePickerDialog datePickerDialog;
     int Year, Month, Day;
     Calendar calendar;
+    List<Usuarios> lstUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
         et_fecha.setKeyListener(null);
         btn_register.setOnClickListener(this);
         datePickerLoad();
+        lstUsers = user.getUsers();
 
     }
 
@@ -68,14 +72,27 @@ public class register extends AppCompatActivity implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_reg_usuario:
+                String dni = et_dni.getText().toString().trim();
                 String nombres = et_nombres.getText().toString().trim();
                 String apellidos = et_apellidos.getText().toString().trim();
                 String email = et_email.getText().toString().trim();
                 String constrasena = et_contrasena.getText().toString().trim();
-                String dni = et_dni.getText().toString().trim();
                 String telefono = et_telefono.getText().toString().trim();
                 String direccion = et_direccion.getText().toString().trim();
                 String fecNac = et_fecha.getText().toString().trim();
+
+                for (Usuarios user: lstUsers) {
+                    if (dni.compareTo(user.getNumerodocumento()) == 0){
+                        Toast.makeText(this, MessageResponse.DNIUSED.getMessageSpanish(),Toast.LENGTH_SHORT).show();
+                        return;
+                    }else if (telefono.compareTo(user.getTelefono()) == 0){
+                        Toast.makeText(this, MessageResponse.TELEFONOUSED.getMessageSpanish(),Toast.LENGTH_SHORT).show();
+                        return;
+                    }else if (email.compareTo(user.getCorreo()) == 0){
+                        Toast.makeText(this, MessageResponse.EMAILUSED.getMessageSpanish(),Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
 
                 Usuarios dataUsuarios = new Usuarios(
                         apellidos,
@@ -94,31 +111,7 @@ public class register extends AppCompatActivity implements View.OnClickListener,
                 );
                 user.createAccount(dataUsuarios);
                 break;
-            case R.id.et_fecha:
-                break;
         }
-    }
-
-    private void validateDataUser() {
-        String nombres = et_email.getText().toString().trim();
-        String apellidos = et_apellidos.getText().toString().trim();
-        String email = et_email.getText().toString().trim();
-        String constrasena = et_contrasena.getText().toString().trim();
-        Usuarios usuarios = new Usuarios(
-                apellidos,
-                constrasena,
-                email,
-                "",
-                "",
-                "",
-                nombres,
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-        );
     }
 
     public void loadGender() {
@@ -184,6 +177,5 @@ public class register extends AppCompatActivity implements View.OnClickListener,
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         String date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
         et_fecha.setText(date);
-        Toast.makeText(register.this, date, Toast.LENGTH_LONG).show();
     }
 }

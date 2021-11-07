@@ -54,5 +54,8 @@
         variable for settings actions gps
      -->
     <string name="msg_settings_gps">Para Continuar, activa la ubicación del dispositivo, que usa el servicio de ubicación de Google.</string>
+    <string name="location_updated">Location Updated: %1$s</string>
+    <string name="remove_location_updates">remove_location_updates</string>
+    <string name="launch_activity">launch_activity</string>
 
 </resources>

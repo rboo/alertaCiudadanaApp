@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.core.alertaciudadana.interfaces.UserInteractor;
 import com.core.alertaciudadana.models.user.Usuarios;
+import com.core.alertaciudadana.util.MessageResponse;
 import com.core.alertaciudadana.views.MenuDrawer;
 import com.core.alertaciudadana.views.login;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,6 +24,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserImpl implements UserInteractor {
 
@@ -72,7 +76,7 @@ public class UserImpl implements UserInteractor {
                             uuid = task.getResult().getUser().getUid();
                             Log.d(TAG, "task uid -> " + uuid);
                             editor.putString("user", uuid);
-                            editor.putBoolean("remind",checked);
+                            editor.putBoolean("remind", checked);
                             editor.commit();
                             Toast.makeText(context, "Bienvenido", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, MenuDrawer.class);
@@ -111,47 +115,66 @@ public class UserImpl implements UserInteractor {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                        String uid = task.getResult().getUser().getUid();
+                        if (task.isSuccessful()) {
+                            String uid = task.getResult().getUser().getUid();
 
-                        //String tokenGcm = FirebaseInstallations.getInstance().getId().getResult();
-                        Log.d(TAG, "token GCM: " + uid);
+                            //String tokenGcm = FirebaseInstallations.getInstance().getId().getResult();
+                            Log.d(TAG, "token GCM: " + uid);
 
-                        Usuarios newUsuarios = new Usuarios(
-                                usuarios.getApellidos(),
-                                usuarios.getClave(),
-                                usuarios.getCorreo(),
-                                usuarios.getDireccion(),
-                                usuarios.getFechanac(),
-                                usuarios.getImagen(),
-                                usuarios.getNombres(),
-                                usuarios.getNumerodocumento(),
-                                usuarios.getSexo(),
-                                usuarios.getTelefono(),
-                                usuarios.getTipoacceso(),
-                                uid,
-                                "2" //2 -> movil
-                        );
+                            Usuarios newUsuarios = new Usuarios(
+                                    usuarios.getApellidos(),
+                                    usuarios.getClave(),
+                                    usuarios.getCorreo(),
+                                    usuarios.getDireccion(),
+                                    usuarios.getFechanac(),
+                                    usuarios.getImagen(),
+                                    usuarios.getNombres(),
+                                    usuarios.getNumerodocumento(),
+                                    usuarios.getSexo(),
+                                    usuarios.getTelefono(),
+                                    usuarios.getTipoacceso(),
+                                    uid,
+                                    "2" //2 -> movil
+                            );
 
-                        mDatabase.child("usuarios")
-                                .child(uid)
-                                .setValue(newUsuarios);
+                            mDatabase.child("usuarios")
+                                    .child(uid)
+                                    .setValue(newUsuarios);
 
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(context, "No se pudo registrar usuario, intente en otro momento porfavor...!",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
                             Toast.makeText(context, "Usuario registrado correctamente",
                                     Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, MenuDrawer.class);
+                            intent.putExtra("usuario",uid);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
+
+                        }else{
+                            Toast.makeText(context, "No se pudo registrar usuario ",
+                                    Toast.LENGTH_SHORT).show();
                         }
+                        //if (!task.isSuccessful()) {
+                            /*Toast.makeText(context, "No se pudo registrar usuario, intente en otro momento porfavor...!",
+                                    Toast.LENGTH_SHORT).show();*/
+                        //} else {
+                            /*Toast.makeText(context, "Usuario registrado correctamente",
+                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(context, MenuDrawer.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);*/
+                        //}
                         progressDialog.dismiss();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        if (e.getMessage().compareTo(MessageResponse.EMAILUSED.getMessageEnglish()) == 0){
+                            Toast.makeText(context, MessageResponse.EMAILUSED.getMessageSpanish(),Toast.LENGTH_SHORT).show();
+                        }else{
+                            Log.e(TAG, "Error " + e.getMessage());
+                            Toast.makeText(context, e.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                         progressDialog.dismiss();
                     }
                 });
@@ -203,7 +226,7 @@ public class UserImpl implements UserInteractor {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         usuarios = dataSnapshot.getValue(Usuarios.class);
-                        System.out.println("data usuario"+usuarios.getCorreo());
+                        System.out.println("data usuario" + usuarios.getCorreo());
                     }
 
                     @Override
@@ -213,7 +236,32 @@ public class UserImpl implements UserInteractor {
                 });
     }
 
-    public boolean isLogged(String uid){
+    @Override
+    public List<Usuarios> getUsers() {
+        List<Usuarios> lstUsers = new ArrayList<>();
+        mDatabase.child("usuarios").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+                    //System.out.println(postSnapshot.getValue(Usuarios.class));
+                    lstUsers.add(postSnapshot.getValue(Usuarios.class));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+        return lstUsers;
+    }
+
+    public boolean isLogged(String uid) {
         final boolean[] flag = {false};
         mDatabase.getDatabase().getReference().child("usuarios").child(uid).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -242,4 +290,6 @@ public class UserImpl implements UserInteractor {
                 });
         return flag[0];
     }
+
+
 }
