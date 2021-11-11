@@ -169,9 +169,6 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                 key,
                 getCurrentUser()
         ));
-
-
-
     }
 
     private void getPhoneNumber() {

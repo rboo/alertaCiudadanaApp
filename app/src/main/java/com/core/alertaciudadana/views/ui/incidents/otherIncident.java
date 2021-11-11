@@ -153,9 +153,10 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
             }).addOnSuccessListener(taskSnapshot -> {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                 // ...
-                Toast.makeText(otherIncident.this,"se subio correctamente",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(otherIncident.this,"se subio correctamente",Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
-                finish();
+                showDialog("Se envio el incidente satisfactoriamente");
+                //finish();
             });
 
         }
@@ -336,5 +337,26 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
                 }
                 break;
         }
+    }
+
+    public void showDialog(String message){
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                })
+                .setNegativeButton("", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create();
+        builder.show();
     }
 }
