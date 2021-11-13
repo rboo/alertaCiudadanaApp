@@ -137,7 +137,7 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                 if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     displayPromptForEnablingGPS(getActivity());
                 } else {
-                    createNotification("Sospechoso");
+                    createNotification("Accidente de Tránsito");
                 }
                 break;
             case R.id.violencia:
