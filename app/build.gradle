@@ -14,8 +14,8 @@ android {
         applicationId "com.core.alertaciudadana"
         minSdk 21
         targetSdk 31
-        versionCode 1
-        versionName "1.8"
+        versionCode 3
+        versionName "3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
