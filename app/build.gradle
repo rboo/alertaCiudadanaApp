@@ -14,9 +14,8 @@ android {
         applicationId "com.core.alertaciudadana"
         minSdk 21
         targetSdk 31
-        versionCode 1
-        versionName "1.6"
-
+        versionCode 3
+        versionName "3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -71,5 +70,7 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
 // CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha30"
+
+    implementation 'org.greenrobot:eventbus:3.2.0'
 
 }

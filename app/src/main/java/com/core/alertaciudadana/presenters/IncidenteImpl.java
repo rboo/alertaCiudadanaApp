@@ -2,9 +2,11 @@ package com.core.alertaciudadana.presenters;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.core.alertaciudadana.interfaces.IncidenteInteractor;
 import com.core.alertaciudadana.models.incidente.Incidente;
@@ -44,6 +46,7 @@ public class IncidenteImpl implements IncidenteInteractor {
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "se guardo correctamente");
                         progressDialog.dismiss();
+                        showDialog("Se envio el incidente satisfactoriamente");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -63,5 +66,25 @@ public class IncidenteImpl implements IncidenteInteractor {
     @Override
     public void notificarIncidente() {
 
+    }
+
+    public void showDialog(String message){
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create();
+        builder.show();
     }
 }

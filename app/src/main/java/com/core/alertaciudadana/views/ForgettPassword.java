@@ -1,8 +1,10 @@
 package com.core.alertaciudadana.views;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,11 +47,32 @@ public class ForgettPassword extends AppCompatActivity implements View.OnClickLi
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     Log.d(TAG, "Email sent.");
-                                    finish();
+                                    showDialog("Se ha enviado satisfactoriamente un email a su cuenta "+correo+", favor de verificar. En caso de no encontrarlo buscarlo en SPAM");
                                 }
                             }
                         });
                 break;
         }
+    }
+
+    public void showDialog(String message){
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                })
+                .setNegativeButton("", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create();
+        builder.show();
     }
 }
