@@ -1,13 +1,9 @@
 package com.core.alertaciudadana.views.ui.incidents;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.ImageCapture;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
@@ -40,8 +36,8 @@ import com.core.alertaciudadana.models.incidente.Incidente;
 import com.core.alertaciudadana.presenters.IncidenteImpl;
 import com.core.alertaciudadana.util.DateUtil;
 import com.core.alertaciudadana.util.NetworkDetector;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
+//import com.google.android.gms.location.FusedLocationProviderClient;
+//import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,11 +65,11 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
     private IncidenteImpl incidente;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private FusedLocationProviderClient fusedLocationClient;
+    //private FusedLocationProviderClient fusedLocationClient;
     private LocationManager mloLocationManager;
     private final static int REQUEST_LOCATION_PERMISSION = 1;
-    private double latitude;
-    private double longitude;
+    private double latitude = 0.0;
+    private double longitude = 0.0;
     private Button btn_reg_incidente;
     ProgressDialog progressDialog;
 
@@ -86,7 +82,7 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
         mDatabase = FirebaseDatabase.getInstance().getReference();
         incidente = new IncidenteImpl(this, mAuth, mDatabase);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mloLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         iv_incidente = findViewById(R.id.iv_foto_incidente);
@@ -255,7 +251,7 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
                     REQUEST_LOCATION_PERMISSION);
         } else {
             Log.d(TAG, "getLocation: permissions granted");
-            fusedLocationClient.getLastLocation().addOnSuccessListener(
+            /*fusedLocationClient.getLastLocation().addOnSuccessListener(
                     new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
@@ -270,7 +266,7 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
                                 getLastKnowLocation();
                             }
                         }
-                    });
+                    });*/
         }
     }
 
@@ -325,7 +321,16 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        System.out.println("onClick");
+
+        if (view.getId() == R.id.iv_foto_incidente){
+            dispatchTakePictureIntent();
+        }else
+        if (view.getId() == R.id.btn_reg_incidente){
+            validateData();
+        }
+
+        /*switch (view.getId()){
             case R.id.iv_foto_incidente:
                 dispatchTakePictureIntent();
                 break;
@@ -336,7 +341,7 @@ public class otherIncident extends AppCompatActivity implements View.OnClickList
                     validateData();
                 }
                 break;
-        }
+        }*/
     }
 
     public void showDialog(String message){

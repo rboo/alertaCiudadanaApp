@@ -2,6 +2,7 @@ package com.core.alertaciudadana.util;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -21,17 +22,17 @@ import androidx.core.app.NotificationCompat;
 
 import com.core.alertaciudadana.R;
 import com.core.alertaciudadana.views.login;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
+
 
 public class LocationUpdate extends Service {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
     //region data
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
+    /*private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
     private LocationSettingsRequest locationSettingsRequest;
@@ -77,6 +78,7 @@ public class LocationUpdate extends Service {
                 this.locationCallback, Looper.myLooper());
     }
 
+    @SuppressLint("ForegroundServiceType")
     private void prepareForegroundNotification() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -91,7 +93,7 @@ public class LocationUpdate extends Service {
         Intent notificationIntent = new Intent(this, login.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 Constant.SERVICE_LOCATION_REQUEST_CODE,
-                notificationIntent, 0);
+                notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification notification = new NotificationCompat.Builder(this, Constant.CHANNEL_ID)
                 .setContentTitle(getString(R.string.app_name))
@@ -116,6 +118,6 @@ public class LocationUpdate extends Service {
         mFusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(this);
 
-    }
+    }*/
 
 }

@@ -1,5 +1,6 @@
 package com.core.alertaciudadana.util;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -24,11 +25,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.core.alertaciudadana.R;
 import com.core.alertaciudadana.views.login;
-import com.google.android.gms.location.FusedLocationProviderClient;
+/*import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationServices;*/
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -81,17 +82,17 @@ public class LocationUpdatesService extends Service {
     /**
      * Contains parameters used by {@link com.google.android.gms.location.FusedLocationProviderApi}.
      */
-    private LocationRequest mLocationRequest;
+    //private LocationRequest mLocationRequest;
 
     /**
      * Provides access to the Fused Location Provider API.
      */
-    private FusedLocationProviderClient mFusedLocationClient;
+    //private FusedLocationProviderClient mFusedLocationClient;
 
     /**
      * Callback for changes in location.
      */
-    private LocationCallback mLocationCallback;
+    //private LocationCallback mLocationCallback;
 
     private Handler mServiceHandler;
 
@@ -105,15 +106,15 @@ public class LocationUpdatesService extends Service {
 
     @Override
     public void onCreate() {
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        //mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        mLocationCallback = new LocationCallback() {
+        /*mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 onNewLocation(locationResult.getLastLocation());
             }
-        };
+        };*/
 
         createLocationRequest();
         getLastLocation();
@@ -178,6 +179,7 @@ public class LocationUpdatesService extends Service {
         super.onRebind(intent);
     }
 
+    @SuppressLint("ForegroundServiceType")
     @Override
     public boolean onUnbind(Intent intent) {
         Log.i(TAG, "Last client unbound from service");
@@ -215,8 +217,8 @@ public class LocationUpdatesService extends Service {
         Utils.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), LocationUpdatesService.class));
         try {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback, Looper.myLooper());
+            /*mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback, Looper.myLooper());*/
         } catch (SecurityException unlikely) {
             Utils.setRequestingLocationUpdates(this, false);
             Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
@@ -230,7 +232,7 @@ public class LocationUpdatesService extends Service {
     public void removeLocationUpdates() {
         Log.i(TAG, "Removing location updates");
         try {
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+            //mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             Utils.setRequestingLocationUpdates(this, false);
             stopSelf();
         } catch (SecurityException unlikely) {
@@ -256,7 +258,7 @@ public class LocationUpdatesService extends Service {
 
         // The PendingIntent to launch activity.
         PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, login.class), 0);
+                new Intent(this, login.class), PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .addAction(R.drawable.ic_baseline_my_location_24, getString(R.string.launch_activity),
@@ -281,7 +283,7 @@ public class LocationUpdatesService extends Service {
 
     private void getLastLocation() {
         try {
-            mFusedLocationClient.getLastLocation()
+            /*mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(new OnCompleteListener<Location>() {
                         @Override
                         public void onComplete(@NonNull Task<Location> task) {
@@ -291,7 +293,7 @@ public class LocationUpdatesService extends Service {
                                 Log.w(TAG, "Failed to get location.");
                             }
                         }
-                    });
+                    });*/
         } catch (SecurityException unlikely) {
             Log.e(TAG, "Lost location permission." + unlikely);
         }
@@ -317,10 +319,10 @@ public class LocationUpdatesService extends Service {
      * Sets the location request parameters.
      */
     private void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
+        /*mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);*/
     }
 
     /**

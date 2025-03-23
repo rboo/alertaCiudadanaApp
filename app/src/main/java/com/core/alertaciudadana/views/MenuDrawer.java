@@ -103,16 +103,16 @@ public class MenuDrawer extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Log.i("TAG", "onNavigationItemSelected: prueba de que entra al click");
-                switch (item.getItemId()) {
-                    case R.id.nav_home:
+                /*switch (item.getItemId()) {
+                    case R.id.nav_home:*/
                         /*Fragment
                                 flistadoPrincipal = ListadoIncidentesFragment.newInstance("valor1", "valor2");
                         getSupportFragmentManager().
                                 beginTransaction().
                                 replace(R.id.nav_host_fragment, flistadoPrincipal, "TAGCUENTA").
                                 commit();*/
-                        break;
-                    case R.id.nav_close_session:
+                        /*break;*/
+                   /* case R.id.nav_close_session:
                         user.logout();
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putBoolean("remind", false);
@@ -123,7 +123,7 @@ public class MenuDrawer extends AppCompatActivity {
                         startActivity(intent);
                         //finish();
                         break;
-                }
+                }*/
                 return true;
             }
         });
