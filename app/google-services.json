@@ -1,36 +1,27 @@
 {
   "project_info": {
-    "project_number": "277260721203",
-    "project_id": "alertaciudadana-50dd3",
-    "storage_bucket": "alertaciudadana-50dd3.appspot.com"
+    "project_number": "1078254881137",
+    "firebase_url": "https://alertaciudadana-498a8-default-rtdb.firebaseio.com",
+    "project_id": "alertaciudadana-498a8",
+    "storage_bucket": "alertaciudadana-498a8.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:277260721203:android:16cb21b6b5b76a7e55d746",
+        "mobilesdk_app_id": "1:1078254881137:android:02bd6d49ec94c8c8224ed0",
         "android_client_info": {
           "package_name": "com.core.alertaciudadana"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "277260721203-4fghfd8usf3259nfnkdj00uleicr1d6r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBCUlhDZiN5q6cKarYWFv7pdZi-NTNzN4k"
+          "current_key": "AIzaSyBiXoMCWxuV_8Z-gI9j_4uYdC2EKv125qg"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "277260721203-4fghfd8usf3259nfnkdj00uleicr1d6r.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

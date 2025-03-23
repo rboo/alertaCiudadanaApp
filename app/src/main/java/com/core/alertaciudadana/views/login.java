@@ -25,8 +25,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.core.alertaciudadana.R;
 import com.core.alertaciudadana.presenters.UserImpl;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,7 +47,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = login.class.getSimpleName().toString();
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FirebaseAuth mAuth;
-    LocationManager mloLocationManager;
+    //LocationManager mloLocationManager;
     private final static int REQUEST_CHECK_SETTINGS = 1;
     private static final int REQUEST_CHECK_CAMERA = 1;
 
@@ -55,6 +57,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.ly_login);
 
         /*Firebase Initialization*/
+        FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -62,7 +65,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         user = new UserImpl(this, mAuth, mDatabase);
 
         /*SharedPreferences Initialization*/
-        prefs = this.getSharedPreferences("session",Context.MODE_PRIVATE);
+        prefs = this.getSharedPreferences("session", Context.MODE_PRIVATE);
         editor = prefs.edit();
 
         /*Inputs Components*/
@@ -83,7 +86,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         checkPermission();
 
         /*Verify GPS*/
-        mloLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        //mloLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         /*if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             displayPromptForEnablingGPS(this);
         }*/
@@ -94,7 +97,19 @@ public class login extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+
+
+        if (view.getId() == R.id.btn_aceptar){
+            validateInput();
+        }else if (view.getId() == R.id.recoveyPassword){
+            startActivity(new Intent(login.this, ForgettPassword.class));
+        }else if (view.getId() == R.id.tv_register){
+            startActivity(new Intent(login.this, register.class));
+        }
+
+        System.out.println("ricardo");
+        /*switch (view.getId()) {
+
             case R.id.btn_aceptar:
                 /*if (chk_remind.isChecked()) {
                     SharedPreferences.Editor editor = prefs.edit();
@@ -102,21 +117,21 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                     editor.commit();
                 }*/
                 validateInput();
-                break;
+                /*break;
             case R.id.recoveyPassword:
                 startActivity(new Intent(login.this, ForgettPassword.class));
-                break;
+                break;*/
             /*case R.id.tv_skip_login:
                 Intent intent = new Intent(login.this, MenuDrawer.class);
                 //mAuth.getCurrentUser().getUid();
                 startActivity(intent);
                 finish();
                 break;*/
-            case R.id.tv_register:
+            /*case R.id.tv_register:
                 startActivity(new Intent(login.this, register.class));
-                //finish();
+                finish();
                 break;
-        }
+        }*/
     }
 
     @Override
@@ -148,7 +163,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
             Toast.makeText(this, "Por favor ingrese su contraseña", Toast.LENGTH_SHORT).show();
             return;
         }
-        user.login(email, password,chk_remind.isChecked());
+        user.login(email, password, chk_remind.isChecked());
     }
 
     private void loadAccess() {
@@ -164,7 +179,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         //int permissionPhone = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         //int permissionSms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
         //int permisionNumbers = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS);
-        int permissionCamera = ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA);
+        int permissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
 
@@ -172,7 +187,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
-        if (permissionCamera != PackageManager.PERMISSION_GRANTED){
+        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.CAMERA);
         }
 

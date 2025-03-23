@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.core.alertaciudadana.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,7 +37,7 @@ public class ForgettPassword extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+        /*switch (view.getId()) {
             case R.id.btn_aceptar:
                 String correo = et_correo.getText().toString().trim();
                 mAuth.sendPasswordResetEmail(correo)
@@ -52,7 +51,7 @@ public class ForgettPassword extends AppCompatActivity implements View.OnClickLi
                             }
                         });
                 break;
-        }
+        }*/
     }
 
     public void showDialog(String message){

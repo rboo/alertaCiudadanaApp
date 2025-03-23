@@ -70,47 +70,45 @@ public class register extends AppCompatActivity implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_reg_usuario:
-                String dni = et_dni.getText().toString().trim();
-                String nombres = et_nombres.getText().toString().trim();
-                String apellidos = et_apellidos.getText().toString().trim();
-                String email = et_email.getText().toString().trim();
-                String constrasena = et_contrasena.getText().toString().trim();
-                String telefono = et_telefono.getText().toString().trim();
-                String direccion = et_direccion.getText().toString().trim();
-                String fecNac = et_fecha.getText().toString().trim();
+        if (view.getId() == R.id.btn_reg_usuario) {
+            String dni = et_dni.getText().toString().trim();
+            String nombres = et_nombres.getText().toString().trim();
+            String apellidos = et_apellidos.getText().toString().trim();
+            String email = et_email.getText().toString().trim();
+            String constrasena = et_contrasena.getText().toString().trim();
+            String telefono = et_telefono.getText().toString().trim();
+            String direccion = et_direccion.getText().toString().trim();
+            String fecNac = et_fecha.getText().toString().trim();
 
-                for (Usuarios user: lstUsers) {
-                    if (dni.compareTo(user.getNumerodocumento()) == 0){
-                        Toast.makeText(this, MessageResponse.DNIUSED.getMessageSpanish(),Toast.LENGTH_SHORT).show();
-                        return;
-                    }else if (telefono.compareTo(user.getTelefono()) == 0){
-                        Toast.makeText(this, MessageResponse.TELEFONOUSED.getMessageSpanish(),Toast.LENGTH_SHORT).show();
-                        return;
-                    }else if (email.compareTo(user.getCorreo()) == 0){
-                        Toast.makeText(this, MessageResponse.EMAILUSED.getMessageSpanish(),Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+            for (Usuarios user : lstUsers) {
+                if (dni.compareTo(user.getNumerodocumento()) == 0) {
+                    Toast.makeText(this, MessageResponse.DNIUSED.getMessageSpanish(), Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (telefono.compareTo(user.getTelefono()) == 0) {
+                    Toast.makeText(this, MessageResponse.TELEFONOUSED.getMessageSpanish(), Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (email.compareTo(user.getCorreo()) == 0) {
+                    Toast.makeText(this, MessageResponse.EMAILUSED.getMessageSpanish(), Toast.LENGTH_SHORT).show();
+                    return;
                 }
+            }
 
-                Usuarios dataUsuarios = new Usuarios(
-                        apellidos,
-                        constrasena,
-                        email,
-                        direccion,
-                        fecNac,
-                        "",
-                        nombres,
-                        dni,
-                        genderValue,
-                        telefono,
-                        "1",
-                        "",
-                        ""
-                );
-                user.createAccount(dataUsuarios);
-                break;
+            Usuarios dataUsuarios = new Usuarios(
+                    apellidos,
+                    constrasena,
+                    email,
+                    direccion,
+                    fecNac,
+                    "",
+                    nombres,
+                    dni,
+                    genderValue,
+                    telefono,
+                    "1",
+                    "",
+                    ""
+            );
+            user.createAccount(dataUsuarios);
         }
     }
 

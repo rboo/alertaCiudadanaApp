@@ -6,30 +6,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.core.alertaciudadana.R;
@@ -38,23 +29,13 @@ import com.core.alertaciudadana.models.user.Usuarios;
 import com.core.alertaciudadana.presenters.IncidenteImpl;
 import com.core.alertaciudadana.presenters.UserImpl;
 import com.core.alertaciudadana.util.DateUtil;
+import com.core.alertaciudadana.util.LocationHelper;
 import com.core.alertaciudadana.util.LocationTrack;
-import com.core.alertaciudadana.views.MenuDrawer;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
+//import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class IncidentFragment extends Fragment implements View.OnClickListener {
@@ -63,12 +44,12 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
     private Context miContexto = null;
     private IncidenteImpl incidente;
     private UserImpl user;
-    private FusedLocationProviderClient fusedLocationClient;
+    //private FusedLocationProviderClient fusedLocationClient;
     private final static int REQUEST_LOCATION_PERMISSION = 1;
     private final static int REQUEST_PHONE_PERMISSION = 1;
     private final static String TAG = IncidentFragment.class.getSimpleName().toString();
-    private double latitude;
-    private double longitude;
+    private double latitude = 0.0;
+    private double longitude = 0.0;
     String mPhoneNumber;
     private TelephonyManager tMgr;
     DatabaseReference mDatabase;
@@ -76,6 +57,8 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
     Usuarios usuarios;
     LocationManager mloLocationManager;
     LocationTrack locationTrack;
+
+    private LocationHelper locationHelper;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -101,12 +84,28 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
         incidente = new IncidenteImpl(miContexto, mAuth, mDatabase);
         user = new UserImpl(miContexto, mAuth, mDatabase);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(miContexto);
+        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(miContexto);
         getLocation();
         tMgr = (TelephonyManager) miContexto.getSystemService(Context.TELEPHONY_SERVICE);
 
         mloLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationHelper = new LocationHelper(getActivity().getApplicationContext());
+        locationHelper.getLocation(new LocationHelper.LocationCallback() {
+            @Override
+            public void onLocationResult(Location location) {
+                if (location != null) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    System.out.println("lati"+latitude);
+                    System.out.println("long"+longitude);
+                }
+            }
 
+            @Override
+            public void onPermissionDenied() {
+                // Manejar el caso de permisos denegados (por ejemplo, mostrar un mensaje al usuario)
+            }
+        });
         /*homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -121,11 +120,39 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
     public void onDestroyView() {
         super.onDestroyView();
         locationTrack.stopListener();
+        locationHelper.stopLocationUpdates();
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+
+        if (view.getId() == R.id.robo){
+            if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                displayPromptForEnablingGPS(getActivity());
+            } else {
+                createNotification("Asalto o Robo");
+            }
+        }else
+        if (view.getId() == R.id.sospechoso){
+            if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                displayPromptForEnablingGPS(getActivity());
+            } else {
+                createNotification("Accidente de Tránsito");
+            }
+        }else
+        if (view.getId() == R.id.violencia){
+            if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                displayPromptForEnablingGPS(getActivity());
+            } else {
+                createNotification("Nuevo Caso de Violencia");
+            }
+        }else
+        if (view.getId() == R.id.otros){
+            Intent intent = new Intent(miContexto, otherIncident.class);
+            startActivity(intent);
+        }
+
+        /*switch (view.getId()) {
             case R.id.robo:
                 if (!mloLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     displayPromptForEnablingGPS(getActivity());
@@ -152,7 +179,7 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
 
-        }
+        }*/
     }
 
     private void createNotification(String titulo) {
@@ -188,12 +215,12 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
         if (ActivityCompat.checkSelfPermission(miContexto,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]
+            ActivityCompat.requestPermissions(requireActivity(), new String[]
                             {Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION);
         } else {
             Log.d(TAG, "getLocation: permissions granted");
-            fusedLocationClient.getLastLocation().addOnSuccessListener(
+            /*fusedLocationClient.getLastLocation().addOnSuccessListener(
                     new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
@@ -208,7 +235,7 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                                 getLastKnowLocation();
                             }
                         }
-                    });
+                    });*/
         }
     }
 
