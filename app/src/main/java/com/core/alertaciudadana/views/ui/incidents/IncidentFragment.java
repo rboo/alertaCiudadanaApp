@@ -31,11 +31,14 @@ import com.core.alertaciudadana.presenters.UserImpl;
 import com.core.alertaciudadana.util.DateUtil;
 import com.core.alertaciudadana.util.LocationHelper;
 import com.core.alertaciudadana.util.LocationTrack;
-//import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 
 public class IncidentFragment extends Fragment implements View.OnClickListener {
@@ -44,7 +47,7 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
     private Context miContexto = null;
     private IncidenteImpl incidente;
     private UserImpl user;
-    //private FusedLocationProviderClient fusedLocationClient;
+    private FusedLocationProviderClient fusedLocationClient;
     private final static int REQUEST_LOCATION_PERMISSION = 1;
     private final static int REQUEST_PHONE_PERMISSION = 1;
     private final static String TAG = IncidentFragment.class.getSimpleName().toString();
@@ -84,12 +87,12 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
         incidente = new IncidenteImpl(miContexto, mAuth, mDatabase);
         user = new UserImpl(miContexto, mAuth, mDatabase);
 
-        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(miContexto);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(miContexto);
         getLocation();
         tMgr = (TelephonyManager) miContexto.getSystemService(Context.TELEPHONY_SERVICE);
 
-        mloLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationHelper = new LocationHelper(getActivity().getApplicationContext());
+        mloLocationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationHelper = new LocationHelper(requireActivity().getApplicationContext());
         locationHelper.getLocation(new LocationHelper.LocationCallback() {
             @Override
             public void onLocationResult(Location location) {
@@ -220,22 +223,19 @@ public class IncidentFragment extends Fragment implements View.OnClickListener {
                     REQUEST_LOCATION_PERMISSION);
         } else {
             Log.d(TAG, "getLocation: permissions granted");
-            /*fusedLocationClient.getLastLocation().addOnSuccessListener(
-                    new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                Log.d(TAG, "Latitud: " + location.getLatitude() + " - Longitud: " + location.getLongitude());
-                                // Start the reverse geocode AsyncTask
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
-                                Log.d(TAG, "show last Location Latitude: "+latitude+ " Longitude: "+longitude);
-                                //Toast.makeText(miContexto, "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
-                            }else{
-                                getLastKnowLocation();
-                            }
+            fusedLocationClient.getLastLocation().addOnSuccessListener(
+                    location -> {
+                        if (location != null) {
+                            Log.d(TAG, "Latitud: " + location.getLatitude() + " - Longitud: " + location.getLongitude());
+                            // Start the reverse geocode AsyncTask
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            Log.d(TAG, "show last Location Latitude: "+latitude+ " Longitude: "+longitude);
+                            //Toast.makeText(miContexto, "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+                        }else{
+                            getLastKnowLocation();
                         }
-                    });*/
+                    });
         }
     }
 

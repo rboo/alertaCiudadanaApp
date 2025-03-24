@@ -11,9 +11,9 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity /*extends AppCompatActivity*/ {
 
-    private UserImpl userimpl;
+    /*private UserImpl userimpl;
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
     SharedPreferences prefs;
@@ -24,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
         //FirebaseApp.initializeApp(this);
         super.onCreate(savedInstanceState);
         startActivity(new Intent(this, MainActivity.class));
-    }
+    }*/
 
 
 }

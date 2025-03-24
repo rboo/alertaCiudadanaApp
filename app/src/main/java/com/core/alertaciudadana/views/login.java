@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -39,12 +38,12 @@ import java.util.List;
 public class login extends AppCompatActivity implements View.OnClickListener {
 
     private UserImpl user;
-    TextView tv_skip_login, tv_register, tv_recoveryPassword;
+    TextView tv_register, tv_recoveryPassword;
     EditText et_email, et_password;
     CheckBox chk_remind;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
-    private static final String TAG = login.class.getSimpleName().toString();
+    private static final String TAG = login.class.getSimpleName();
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FirebaseAuth mAuth;
     //LocationManager mloLocationManager;
@@ -91,8 +90,8 @@ public class login extends AppCompatActivity implements View.OnClickListener {
             displayPromptForEnablingGPS(this);
         }*/
 
-        validateAccess();
-        loadAccess();
+        //validateAccess();
+        //loadAccess();
     }
 
     @Override
@@ -107,7 +106,6 @@ public class login extends AppCompatActivity implements View.OnClickListener {
             startActivity(new Intent(login.this, register.class));
         }
 
-        System.out.println("ricardo");
         /*switch (view.getId()) {
 
             case R.id.btn_aceptar:
@@ -116,7 +114,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                     editor.putBoolean("remind", chk_remind.isChecked());
                     editor.commit();
                 }*/
-                validateInput();
+                //validateInput();
                 /*break;
             case R.id.recoveyPassword:
                 startActivity(new Intent(login.this, ForgettPassword.class));
@@ -142,7 +140,8 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permisoDeCamaraConcedido();
                     //startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    displayPromptForEnablingGPS(this);
+                    //displayPromptForEnablingGPS(this);
+                    Log.d(TAG,"onRequestPermissionsResult granted");
                 } else {
                     //permisoDeCamaraDenegado();
                 }
@@ -176,9 +175,6 @@ public class login extends AppCompatActivity implements View.OnClickListener {
 
     private boolean checkAndRequestPermissions() {
         int permissionLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        //int permissionPhone = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-        //int permissionSms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
-        //int permisionNumbers = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS);
         int permissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
@@ -190,18 +186,6 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.CAMERA);
         }
-
-        /*if (permissionPhone != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
-        }*
-
-        /*if (permissionSms != PackageManager.PERMISSION_GRANTED){
-            listPermissionsNeeded.add(Manifest.permission.READ_SMS);
-        }
-
-        if (permisionNumbers != PackageManager.PERMISSION_GRANTED){
-            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_NUMBERS);
-        }*/
 
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this,
