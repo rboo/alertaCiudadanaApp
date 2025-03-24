@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,10 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgettPassword extends AppCompatActivity implements View.OnClickListener {
 
-    Button btn_aceptar;
-    EditText et_correo;
+    Button btnAccept;
+    EditText etEmail;
     FirebaseAuth mAuth;
-    private static final String TAG = ForgettPassword.class.getSimpleName().toString();
+    private static final String TAG = ForgettPassword.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,29 +28,27 @@ public class ForgettPassword extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.layout_forgett_password);
 
         mAuth = FirebaseAuth.getInstance();
-        et_correo = findViewById(R.id.et_correo_lost);
-        btn_aceptar = findViewById(R.id.btn_aceptar);
-        et_correo.setOnClickListener(this);
-        btn_aceptar.setOnClickListener(this);
+        etEmail = findViewById(R.id.et_correo_lost);
+        btnAccept = findViewById(R.id.btn_aceptar);
+        etEmail.setOnClickListener(this);
+        btnAccept.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        /*switch (view.getId()) {
-            case R.id.btn_aceptar:
-                String correo = et_correo.getText().toString().trim();
-                mAuth.sendPasswordResetEmail(correo)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "Email sent.");
-                                    showDialog("Se ha enviado satisfactoriamente un email a su cuenta "+correo+", favor de verificar. En caso de no encontrarlo buscarlo en SPAM");
-                                }
+        if (view.getId() == R.id.btn_aceptar) {
+            String email = etEmail.getText().toString().trim();
+            mAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Email sent.");
+                                showDialog("Se ha enviado satisfactoriamente un email a su cuenta " + email + ", favor de verificar. En caso de no encontrarlo buscarlo en SPAM");
                             }
-                        });
-                break;
-        }*/
+                        }
+                    });
+        }
     }
 
     public void showDialog(String message){
@@ -59,16 +56,12 @@ public class ForgettPassword extends AppCompatActivity implements View.OnClickLi
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage(message)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                .setPositiveButton("Ok", (dialog, id) -> {
+                    dialog.dismiss();
+                    finish();
                 })
-                .setNegativeButton("", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
+                .setNegativeButton("", (dialog, id) -> {
+                    // User cancelled the dialog
                 });
         // Create the AlertDialog object and return it
         builder.create();

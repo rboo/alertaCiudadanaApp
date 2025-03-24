@@ -24,9 +24,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AlertaCiudadana">
-        <activity
+        <!--<activity
             android:name=".views.ui.gps.GpsActivity"
-            android:exported="true" />
+            android:exported="true" />-->
         <activity
             android:name=".views.ui.incidents.otherIncident"
             android:exported="true"
@@ -62,9 +62,9 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme" />
-        <activity
+        <!--<activity
             android:name=".views.SplashActivity"
-            android:exported="true" />
+            android:exported="true" />-->
         <activity
             android:name=".views.MenuDrawer"
             android:exported="true"
